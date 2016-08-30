@@ -1,0 +1,29 @@
+<nav class="navbar navbar-default">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#nav-items">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+        <a href="/polls" class="navbar-brand">Voting-App</a>
+    </div>
+    <div class="collapse navbar-collapse" id="nav-items">
+        <ul class="nav navbar-nav navbar-left">
+            <li id="nav_item_home"><a href="/user">Home</a></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+            <li class="" id="nav_item_my_polls"><a ui-sref="myPolls" href="/my_polls">My Polls</a></li>
+            <li class="" id="nav_item_new_poll"><a ui-sref="newPoll" href="/new_poll">New Poll</a></li>
+            <li class="nav navbar-nav">
+            <li id="login-dropdown-list" class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                    <%= username %>
+                    <b class="caret"></b>
+                </a>
+                <div class="dropdown-menu">
+                    <a href="/log_out" style="text-decoration: none;"><button class="btn btn-block btn-primary">Log out</button></a>
+                </div>
+            </li>
+        </ul>
+    </div>
+</nav>

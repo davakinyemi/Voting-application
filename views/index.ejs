@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <% include partials/head %>
+    <script>
+        $(document).ready(function(){
+            if ('<%= signup_message_success %>'.length > 0 || '<%= signup_message_fail %>'.length > 0) {
+                $('#signup_button').click();
+            }
+            $('#nav_item_home').addClass('active');
+        });
+    </script>
+</head>
+<body>
+    <header>
+        <% include partials/nav %>
+    </header>
+
+    <div class="modal fade" id="signup_modal" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header text-center">
+                    <h3>Sign up</h3>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="placeholder"> <!--For some reason, first element not rendered in modal-->
+                    </form>
+
+                    <% if (signup_message_fail.length > 0) { %>
+                    <div class="alert alert-danger"><%= signup_message_fail %></div>
+                    <% } %>
+
+                    <% if (signup_message_success.length > 0) { %>
+                    <div class="alert alert-success"><%= signup_message_success %></div>
+                    <% } %>
+
+                    <form method="post" action="/sign_up">
+
+                        <div class="form-group">
+                            <input type="name" class="form-control" id="username" name="username" placeholder="username" required/>
+                        </div>
+
+                        <div class="form-group">
+                            <input type="password" class="form-control" id="pwd" name="password" placeholder="password" required/>
+                        </div>
+                        <button type="submit" name="submit" value="sign_up" class="btn btn-primary">Sign Up</button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <main>
+        <div class="jumbotron text-center">
+            <h1>voting-app</h1>
+            <p>Below are polls hosted by voting-app.</p>
+            <p>Select a poll to see the results and vote, or sign-in to make a new poll.</p>
+            <% include partials/polls %>
+        </div>
+    </main>
+</body>
+
+</html>

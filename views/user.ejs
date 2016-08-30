@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <% include partials/head %>
+    <script>
+        $(document).ready(function(){
+            $('#nav_item_home').addClass('active');
+        });
+    </script>
+</head>
+<body>
+    <header>
+        <% include partials/user_nav %>
+    </header>
+    <main>
+        <div class="jumbotron text-center">
+            <h1>voting-app</h1>
+            <p><%= owner %></p>
+            <p>Select a poll to see the results and vote<a href="/new_poll">, or make a new poll!</a></p>
+            <% include partials/polls %>
+        </div>
+    </main>
+</body>
+</html>
