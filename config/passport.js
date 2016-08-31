@@ -1,12 +1,12 @@
 var crypto = require('crypto');
 var LocalStrategy   = require('passport-local').Strategy;
-
 var mysql = require('mysql');
+var dbConn = require(__dirname + '/db_conn');
 
 var connection = mysql.createConnection({
-    host     : 'localhost',
-    user     : 'root',
-    password : ''
+    host: dbConn.host,
+    user: dbConn.user,
+    password: dbConn.password
 });
 
 connection.query('USE votingApp');
@@ -22,7 +22,12 @@ module.exports = function(passport) {
 
     // used to serialize the user for the session
     passport.serializeUser(function(user, done) {
-        done(null, user.userid);
+        console.log(JSON.stringify(user));
+        if(user.id){
+            done(null, user.id);
+        } else if(user.userid){
+            done(null, user.userid);
+        }
     });
 
     // used to deserialize the user
@@ -85,7 +90,7 @@ module.exports = function(passport) {
                         }
                         newUserMysql.id = result.insertId;
                         console.log('sign up success');
-                        return done(null, newUserMysql, req.flash('signupMessageSuccess', 'sign up successful. You may login now.'));
+                        return done(null, newUserMysql);
                     });
                 }
             });

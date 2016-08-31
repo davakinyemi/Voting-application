@@ -2,22 +2,24 @@
  * Created by dav on 29.08.16.
  */
 var mysql = require('mysql');
+var dbConn = require(__dirname + '/db_conn');
 
 module.exports = function(req){
     var callback_ = arguments[arguments.length - 1];
 
     var connection = mysql.createConnection({
-        host: 'localhost',
-        user: 'root',
-        password: ''
+        host: dbConn.host,
+        user: dbConn.user,
+        password: dbConn.password
     });
     connection.connect();
     connection.query('USE votingApp');
 
     var user = req.user.userid;
     var title = req.body.title;
-    var options = req.body.options.split('\n');
-    if (options === undefined || options.length == 0) {
+    var options = replaceEmptyOpts(req.body.options.split('\n'));
+    console.log(options);
+    if (options == undefined || options.length == 0) {
         return callback_('please fill in some options', null);
     }
 
@@ -49,7 +51,7 @@ module.exports = function(req){
                     var sql_query = 'INSERT INTO options (poll, name) VALUES ?';
                     var values = [];
                     for(var i = 0; i < options.length; i++){
-                        values.push([result[0].pollid, options[i].trim()]);
+                        values.push([result[0].pollid, options[i]]);
                     }
                     console.log(values);
                     connection.query(sql_query, [values], function(err, result){
@@ -78,5 +80,17 @@ module.exports = function(req){
             }
         });
     });
+}
+
+function replaceEmptyOpts(options){
+    var arr = [];
+    for(var i = 0; i < options.length; i++){
+        var opt = options[i].trim();
+        if(opt.length > 0){
+            console.log('opt: ' + opt);
+            arr.push(opt);
+        }
+    }
+    return arr;
 }
 

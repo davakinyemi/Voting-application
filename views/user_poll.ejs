@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <% include partials/head %>
+    <script>
+        $(document).ready(function(){
+            $('#nav_item_home').addClass('active');
+        });
+    </script>
+</head>
+<body>
+<header>
+    <% include partials/user_nav %>
+</header>
+<main>
+    <% if (poll_error.length > 0) { %>
+    <div class="jumbotron"><div class="container"><p><%= poll_error %></p></div></div>
+    <% } else {%>
+    <% include partials/poll_chart %>
+    <% } %>
+</main>
+</body>
+</html>

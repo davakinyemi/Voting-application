@@ -1,5 +1,6 @@
 var express = require('express');
 var get_polls = require('../config/get_polls');
+var get_poll = require('../config/get_poll');
 module.exports = function(app, passport){
     /* GET home page. */
     app.get('/voting_app', function(req, res) {
@@ -9,21 +10,41 @@ module.exports = function(app, passport){
         } else{
             get_polls(null, function(err, result){
                 if(err || result.length == 0){
-                    res.render('index.ejs', { login_message: req.flash('loginMessage'), signup_message_fail: req.flash('signupMessageFail'), signup_message_success: req.flash('signupMessageSuccess'), polls: null, nopolls: 'There are no polls' });
+                    res.render('index.ejs', { login_message: req.flash('loginMessage'), signup_message_fail: req.flash('signupMessageFail'), polls: null, nopolls: 'There are no polls' });
                 } else {
-                    res.render('index.ejs', { login_message: req.flash('loginMessage'), signup_message_fail: req.flash('signupMessageFail'), signup_message_success: req.flash('signupMessageSuccess'), polls: result, nopolls: '' });
+                    res.render('index.ejs', { login_message: req.flash('loginMessage'), signup_message_fail: req.flash('signupMessageFail'), polls: result, nopolls: '' });
                 }
             });
         }
 
     });
 
+    app.get('/poll', function(req, res){
+        get_poll(req.query.id, function(err, poll, options){
+            if (req.isAuthenticated()){
+                if(err){
+                    res.render('user_poll.ejs', { username: req.user.username, poll_stats: null, poll_options: null, poll_error: 'Sorry, poll could not be loaded'  });
+                } else {
+                    res.render('user_poll.ejs', { username: req.user.username, poll_stats: poll, poll_options: options, poll_error: ''  });
+                }
+            } else {
+                if(err){
+                    res.render('poll.ejs', { login_message: req.flash('loginMessage'), signup_message_fail: req.flash('signupMessageFail'), poll_stats: null, poll_options: null, poll_error: 'Sorry, poll could not be loaded'  });
+                } else {
+                    res.render('poll.ejs', { login_message: req.flash('loginMessage'), signup_message_fail: req.flash('signupMessageFail'), poll_stats: poll, poll_options: options, poll_error: ''  });
+                }
+            }
+
+        });
+
+    });
+
     app.get('/my_polls', isLoggedIn, function(req, res){
         get_polls(req.user.userid, function(err, result){
             if(err || result.length == 0){
-                res.render('user.ejs', { username: req.user.username, polls: null, nopolls: 'You have no polls', owner: 'Below are your polls.' });
+                res.render('user.ejs', { username: req.user.username, polls: null, nopolls: 'You have no polls', owner: 'user' });
             } else {
-                res.render('user.ejs', { username: req.user.username, polls: result, nopolls: '', owner: 'Below are your polls.' });
+                res.render('user.ejs', { username: req.user.username, polls: result, nopolls: '', owner: 'user' });
             }
         });
     });
@@ -35,9 +56,9 @@ module.exports = function(app, passport){
     app.get('/user', isLoggedIn, function(req, res) {
         get_polls(null, function(err, result){
             if(err || result.length == 0){
-                res.render('user.ejs', { username: req.user.username, polls: null, nopolls: 'There are no polls', owner: 'Below are polls hosted by voting-app.' });
+                res.render('user.ejs', { username: req.user.username, polls: null, nopolls: 'There are no polls', owner: 'app' });
             } else {
-                res.render('user.ejs', { username: req.user.username, polls: result, nopolls: '', owner: 'Below are polls hosted by voting-app.' });
+                res.render('user.ejs', { username: req.user.username, polls: result, nopolls: '', owner: 'app' });
             }
         });
     });

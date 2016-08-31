@@ -1,4 +1,5 @@
 var mysql = require('mysql');
+var dbConn = require(__dirname + '/db_conn');
 
 module.exports = function(user){
     var callback_ = arguments[arguments.length - 1];
@@ -12,9 +13,9 @@ module.exports = function(user){
 
 
     var connection = mysql.createConnection({
-        host: 'localhost',
-        user: 'root',
-        password: ''
+        host: dbConn.host,
+        user: dbConn.user,
+        password: dbConn.password
     });
     connection.connect();
     connection.query('USE votingApp');

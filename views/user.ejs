@@ -14,10 +14,16 @@
     </header>
     <main>
         <div class="jumbotron text-center">
+            <div class="container">
             <h1>voting-app</h1>
-            <p><%= owner %></p>
+            <% if (owner == 'user') { %>
+            <p>Below are your polls.</p>
+            <% } else if(owner == 'app'){ %>
+            <p>Below are polls hosted by voting-app.</p>
+            <% } %>
             <p>Select a poll to see the results and vote<a href="/new_poll">, or make a new poll!</a></p>
             <% include partials/polls %>
+        </div>
         </div>
     </main>
 </body>

@@ -1,7 +1,7 @@
-<div class="list-group" style="padding: 0px 60px; margin: 0px;">
+<div class="list-group" style="margin: 0px;">
     <% if(polls) {%>
         <% for(var i = 0; i < polls.length; i++) { %>
-            <a id="<%= polls[i].pollid %>" class="list-group-item"><%= polls[i].title %></a>
+            <a href="/poll?id=<%= polls[i].pollid %>" class="list-group-item"><%= polls[i].title %></a>
         <% } %>
     <% } %>
 
