@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Aug 31, 2016 at 01:44 PM
+-- Generation Time: Sep 01, 2016 at 04:35 AM
 -- Server version: 5.7.13-0ubuntu0.16.04.2
 -- PHP Version: 5.6.25-2+deb.sury.org~xenial+1
 
@@ -59,6 +59,18 @@ CREATE TABLE `users` (
   `salt` double NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `voted`
+--
+
+CREATE TABLE `voted` (
+  `user` int(11) DEFAULT NULL,
+  `poll` int(11) NOT NULL,
+  `user_ip` varbinary(300) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 --
 -- Indexes for dumped tables
 --
@@ -85,6 +97,13 @@ ALTER TABLE `users`
   ADD UNIQUE KEY `username` (`username`);
 
 --
+-- Indexes for table `voted`
+--
+ALTER TABLE `voted`
+  ADD KEY `user` (`user`),
+  ADD KEY `poll` (`poll`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -92,12 +111,12 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `options`
 --
 ALTER TABLE `options`
-  MODIFY `optionsid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `optionsid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 --
 -- AUTO_INCREMENT for table `poll`
 --
 ALTER TABLE `poll`
-  MODIFY `pollid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+  MODIFY `pollid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
 --
 -- AUTO_INCREMENT for table `users`
 --
@@ -118,6 +137,13 @@ ALTER TABLE `options`
 --
 ALTER TABLE `poll`
   ADD CONSTRAINT `poll_ibfk_1` FOREIGN KEY (`user`) REFERENCES `users` (`userid`);
+
+--
+-- Constraints for table `voted`
+--
+ALTER TABLE `voted`
+  ADD CONSTRAINT `voted_ibfk_1` FOREIGN KEY (`user`) REFERENCES `users` (`userid`),
+  ADD CONSTRAINT `voted_ibfk_2` FOREIGN KEY (`poll`) REFERENCES `poll` (`pollid`);
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

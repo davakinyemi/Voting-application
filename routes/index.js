@@ -1,10 +1,13 @@
 var express = require('express');
 var get_polls = require('../config/get_polls');
 var get_poll = require('../config/get_poll');
+var vote = require('../config/vote');
+var create_poll = require('../config/create_poll');
 module.exports = function(app, passport){
     /* GET home page. */
     app.get('/voting_app', function(req, res) {
         // if user is authenticated in the session, carry on
+        console.log(req.ip);
         if (req.isAuthenticated()){
             res.redirect('/user');
         } else{
@@ -20,18 +23,29 @@ module.exports = function(app, passport){
     });
 
     app.get('/poll', function(req, res){
-        get_poll(req.query.id, function(err, poll, options){
+        get_poll(req.query.num, function(err, poll, options){
+            var error, voted;
+            if(req.query.err){
+                error = req.query.err;
+            } else {
+                error = '';
+            }
+            if(req.query.voted){
+                voted = req.query.voted;
+            } else {
+                voted = '';
+            }
             if (req.isAuthenticated()){
                 if(err){
-                    res.render('user_poll.ejs', { username: req.user.username, poll_stats: null, poll_options: null, poll_error: 'Sorry, poll could not be loaded'  });
+                    res.render('user_poll.ejs', { username: req.user.username, poll_stats: null, poll_options: null, poll_error: 'Sorry, poll could not be loaded', user_logged: true, vote_error: error, vote_success: voted });
                 } else {
-                    res.render('user_poll.ejs', { username: req.user.username, poll_stats: poll, poll_options: options, poll_error: ''  });
+                    res.render('user_poll.ejs', { username: req.user.username, poll_stats: poll, poll_options: options, poll_error: '', user_logged: true, vote_error: error, vote_success: voted  });
                 }
             } else {
                 if(err){
-                    res.render('poll.ejs', { login_message: req.flash('loginMessage'), signup_message_fail: req.flash('signupMessageFail'), poll_stats: null, poll_options: null, poll_error: 'Sorry, poll could not be loaded'  });
+                    res.render('poll.ejs', { login_message: req.flash('loginMessage'), signup_message_fail: req.flash('signupMessageFail'), poll_stats: null, poll_options: null, poll_error: 'Sorry, poll could not be loaded', user_logged: false, vote_error: error, vote_success: voted  });
                 } else {
-                    res.render('poll.ejs', { login_message: req.flash('loginMessage'), signup_message_fail: req.flash('signupMessageFail'), poll_stats: poll, poll_options: options, poll_error: ''  });
+                    res.render('poll.ejs', { login_message: req.flash('loginMessage'), signup_message_fail: req.flash('signupMessageFail'), poll_stats: poll, poll_options: options, poll_error: '', user_logged: false, vote_error: error, vote_success: voted  });
                 }
             }
 
@@ -82,12 +96,22 @@ module.exports = function(app, passport){
     }));
 
     app.post('/new_poll', function(req, res){
-        require('../config/create_poll')(req, function(err, success){
+        create_poll(req, function(err, success){
             if(err){
                 res.render('new_poll.ejs', { username: req.user.username, create_poll_fail: err, create_poll_success: '' });
             } else{
                 res.render('new_poll.ejs', { username: req.user.username, create_poll_fail: '', create_poll_success: success });
             }
+        });
+    });
+
+    app.post('/vote', function(req, res){
+        vote(req, function(err, success){
+                if(err){
+                    res.redirect('/poll?num=' + req.query.poll + '&err=' + err + '&voted=');
+                    } else {
+                    res.redirect('/poll?num=' + req.query.poll + '&err=&voted=' + success);
+                    }
         });
     });
 

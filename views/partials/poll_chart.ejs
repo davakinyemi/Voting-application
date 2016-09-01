@@ -1,27 +1,30 @@
 <div class="jumbotron">
     <div class="container">
-    <div class="col-sm-4">
-        <p class="poll_title"><%= poll_stats.title %></p>
-        <form>
-            <div class="form-group">
-                <div class="row">
-                    <div class="col-xs-12">
-                        <div class="form-group">
-                            <label for="votefor">I'd like to vote for...: </label>
-                            <select id="votefor" name="votefor" class="form-control">
-                                <option value="" disabled="disabled" selected="selected">Choose an option...: </option>
-                                <% for(var i = 0; i < poll_options.length; i++) { %>
-                                <option value="<%= poll_options[i].pollid %>"><%= poll_options[i].name %></option>
-                                <% } %>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-xs-12">
-                        <input class="btn btn-primary btn-block" type="submit" value="Submit">
-                    </div>
+        <div class="col-sm-4">
+            <p class="poll_title"><%= poll_stats.title %></p>
+            <% if (vote_error.length > 0) { %>
+            <div class="alert alert-danger"><%= vote_error %></div>
+            <% } %>
+            <% if (vote_success.length > 0) { %>
+            <div class="alert alert-success"><%= vote_success %></div>
+            <% } %>
+            <form method="post" action="/vote?poll=<%= poll_stats.pollid %>" id="vote_form">
+                <div class="form-group">
+                    <label for="votefor">I'd like to vote for...: </label>
+                    <select id="votefor" name="votefor" class="form-control" form="vote_form">
+                        <% for(var i = 0; i < poll_options.length; i++) { %>
+                        <option value="<%= poll_options[i].optionsid %>"><%= poll_options[i].name %></option>
+                        <% } %>
+                    </select>
                 </div>
-            </div>
-        </form>
-    </div>
+                <% if (user_logged) { %>
+                <div class="form-group">
+                    <label for="custom-opt">Add option: </label>
+                    <input id="custom_opt" type="text" name="custom_opt">
+                </div>
+                <% } %>
+                <button class="btn btn-primary btn-block" type="submit" value="vote_poll" name="submit">Vote</button>
+            </form>
         </div>
+    </div>
 </div>
