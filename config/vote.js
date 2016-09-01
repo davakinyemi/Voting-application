@@ -24,11 +24,9 @@ module.exports = function(req){
 
     connection.query('SELECT * FROM options WHERE optionsid = ?', [option_id], function(err, result){
         if(err){
-            if(err){
-                status = 'an error occurred, vote could not be registered';
+            status = 'an error occurred, vote could not be registered';
                 console.log(err);
                 return callback_(status, null);
-            }
         }
         option = result[0];
         if(req.user){

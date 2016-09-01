@@ -3,6 +3,7 @@ var get_polls = require('../config/get_polls');
 var get_poll = require('../config/get_poll');
 var vote = require('../config/vote');
 var create_poll = require('../config/create_poll');
+var delete_poll = require('../config/delete_poll');
 module.exports = function(app, passport){
     /* GET home page. */
     app.get('/voting_app', function(req, res) {
@@ -37,15 +38,15 @@ module.exports = function(app, passport){
             }
             if (req.isAuthenticated()){
                 if(err){
-                    res.render('user_poll.ejs', { username: req.user.username, poll_stats: null, poll_options: null, poll_error: 'Sorry, poll could not be loaded', user_logged: true, vote_error: error, vote_success: voted });
+                    res.render('user_poll.ejs', { user: req.user.userid, username: req.user.username, poll_stats: null, poll_options: null, poll_error: 'Sorry, poll could not be loaded', user_logged: true, vote_error: error, vote_success: voted });
                 } else {
-                    res.render('user_poll.ejs', { username: req.user.username, poll_stats: poll, poll_options: options, poll_error: '', user_logged: true, vote_error: error, vote_success: voted  });
+                    res.render('user_poll.ejs', { user: req.user.userid, username: req.user.username, poll_stats: poll, poll_options: options, poll_error: '', user_logged: true, vote_error: error, vote_success: voted  });
                 }
             } else {
                 if(err){
-                    res.render('poll.ejs', { login_message: req.flash('loginMessage'), signup_message_fail: req.flash('signupMessageFail'), poll_stats: null, poll_options: null, poll_error: 'Sorry, poll could not be loaded', user_logged: false, vote_error: error, vote_success: voted  });
+                    res.render('poll.ejs', { user: '', login_message: req.flash('loginMessage'), signup_message_fail: req.flash('signupMessageFail'), poll_stats: null, poll_options: null, poll_error: 'Sorry, poll could not be loaded', user_logged: false, vote_error: error, vote_success: voted  });
                 } else {
-                    res.render('poll.ejs', { login_message: req.flash('loginMessage'), signup_message_fail: req.flash('signupMessageFail'), poll_stats: poll, poll_options: options, poll_error: '', user_logged: false, vote_error: error, vote_success: voted  });
+                    res.render('poll.ejs', { user: '', login_message: req.flash('loginMessage'), signup_message_fail: req.flash('signupMessageFail'), poll_stats: poll, poll_options: options, poll_error: '', user_logged: false, vote_error: error, vote_success: voted  });
                 }
             }
 
@@ -68,11 +69,22 @@ module.exports = function(app, passport){
     });
 
     app.get('/user', isLoggedIn, function(req, res) {
+        var error, removed;
+        if(req.query.err){
+            error = req.query.err;
+        } else {
+            error = '';
+        }
+        if(req.query.removed){
+            removed = req.query.removed;
+        } else {
+            removed = '';
+        }
         get_polls(null, function(err, result){
             if(err || result.length == 0){
-                res.render('user.ejs', { username: req.user.username, polls: null, nopolls: 'There are no polls', owner: 'app' });
+                res.render('user.ejs', { poll_remove_error: error, poll_remove_success: removed, username: req.user.username, polls: null, nopolls: 'There are no polls', owner: 'app' });
             } else {
-                res.render('user.ejs', { username: req.user.username, polls: result, nopolls: '', owner: 'app' });
+                res.render('user.ejs', { poll_remove_error: error, poll_remove_success: removed, username: req.user.username, polls: result, nopolls: '', owner: 'app' });
             }
         });
     });
@@ -115,6 +127,15 @@ module.exports = function(app, passport){
         });
     });
 
+    app.post('/remove_poll', isLoggedIn, function(req, res){
+        delete_poll(req, function(err, success){
+            if(err){
+                res.redirect('/user?err=' + err + '&removed=');
+            } else {
+                res.redirect('/user?err=&removed=' + success);
+            }
+        });
+    });
 
 };
 

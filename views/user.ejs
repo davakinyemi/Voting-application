@@ -22,6 +22,12 @@
             <p>Below are polls hosted by voting-app.</p>
             <% } %>
             <p>Select a poll to see the results and vote<a href="/new_poll">, or make a new poll!</a></p>
+                <% if (poll_remove_error.length > 0) { %>
+                <div class="alert alert-danger"><%= poll_remove_error %></div>
+                <% } %>
+                <% if (poll_remove_success.length > 0) { %>
+                <div class="alert alert-success"><%= poll_remove_success %></div>
+                <% } %>
             <% include partials/polls %>
         </div>
         </div>

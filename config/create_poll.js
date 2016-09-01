@@ -19,8 +19,8 @@ module.exports = function(req){
     var title = req.body.title;
     var options = replaceEmptyOpts(req.body.options.split('\n'));
     console.log(options);
-    if (options == undefined || options.length == 0) {
-        return callback_('please fill in some options', null);
+    if (options == undefined || options.length < 2) {
+        return callback_('please add more options', null);
     }
 
     connection.beginTransaction(function(err) {
