@@ -26,7 +26,7 @@
                 <button class="btn btn-primary btn-block" type="submit" value="vote_poll" name="submit">Vote</button>
             </form>
         </div>
-        <div class="col-sm-8">
+        <div class="col-sm-8" id="chart_container">
             <% if (poll_stats.user == user) { %>
             <button class="btn btn-block btn-danger" data-toggle="modal" data-target="#delete_modal">Remove this Poll</button>
 

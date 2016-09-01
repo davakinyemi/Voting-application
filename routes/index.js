@@ -57,9 +57,9 @@ module.exports = function(app, passport){
     app.get('/my_polls', isLoggedIn, function(req, res){
         get_polls(req.user.userid, function(err, result){
             if(err || result.length == 0){
-                res.render('user.ejs', { username: req.user.username, polls: null, nopolls: 'You have no polls', owner: 'user' });
+                res.render('user.ejs', { poll_remove_error: '', poll_remove_success: '', username: req.user.username, polls: null, nopolls: 'You have no polls', owner: 'user' });
             } else {
-                res.render('user.ejs', { username: req.user.username, polls: result, nopolls: '', owner: 'user' });
+                res.render('user.ejs', { poll_remove_error: '', poll_remove_success: '', username: req.user.username, polls: result, nopolls: '', owner: 'user' });
             }
         });
     });
@@ -69,7 +69,7 @@ module.exports = function(app, passport){
     });
 
     app.get('/user', isLoggedIn, function(req, res) {
-        var error, removed;
+        var error, removed = '';
         if(req.query.err){
             error = req.query.err;
         } else {
