@@ -13,6 +13,7 @@ module.exports = function(req){
     var sql_query = '';
     var query_options;
     var option;
+    var custom;
     var connection = mysql.createConnection({
         host: dbConn.host,
         user: dbConn.user,
@@ -47,13 +48,72 @@ module.exports = function(req){
                 status = 'You have already voted';
                 return callback_(status, null);
             }
-            connection.beginTransaction(function(err){
-                if(err){
+
+            if(req.body.custom_opt){
+                custom = req.body.custom_opt.trim();
+                if(custom.length > 0){
+                    connection.query('SELECT * FROM options WHERE name = ? AND poll = ?', [custom, option.poll], function(err, result){
+                        if(err){
+                            status = 'an error occurred, vote could not be registered';
+                            console.log(err);
+                            return callback_(status, null);
+                        }
+                        if(result[0]){
+                            option = result[0];
+                            // begin transaction
+                            vote_transaction(connection, status, option, option_id, req, callback_, sql_query, query_options, ip, null);
+                        } else {
+                            connection.query('INSERT INTO options SET poll = ?, name = ?', [option.poll, custom], function(err, result){
+                                if(err){
+                                    status = 'an error occurred, vote could not be registered';
+                                    console.log(err);
+                                    return callback_(status, null);
+                                }
+                                option_id = result.insertId;
+                                //begin transaction
+                                vote_transaction(connection, status, option, option_id, req, callback_, sql_query, query_options, ip, custom);
+                            });
+                        }
+                    });
+                }
+            } else {
+                vote_transaction(connection, status, option, option_id, req, callback_, sql_query, query_options, ip);
+            }
+        });
+    });
+}
+
+function vote_transaction(connection, status, option, option_id, req, callback_, sql_query, query_options, ip, custom){
+    connection.beginTransaction(function(err){
+        if(err){
+            status = 'an error occurred, vote could not be registered';
+            console.log(err);
+            return callback_(status, null);
+        }
+        connection.query('UPDATE options SET votedfor = votedfor + 1 WHERE optionsid = ?', [option_id], function(err, result){
+            if(err){
+                connection.rollback(function(){
                     status = 'an error occurred, vote could not be registered';
                     console.log(err);
                     return callback_(status, null);
+                });
+            }
+            connection.query('UPDATE poll SET voted = voted + 1 WHERE pollid = ?', [option.poll], function(err, result){
+                if(err){
+                    connection.rollback(function(){
+                        status = 'an error occurred, vote could not be registered';
+                        console.log(err);
+                        return callback_(status, null);
+                    });
                 }
-                connection.query('UPDATE options SET votedfor = votedfor + 1 WHERE optionsid = ?', [option_id], function(err, result){
+                if(req.user){
+                    sql_query = 'INSERT INTO voted SET poll = ?, user = ?';
+                    query_options = [option.poll, req.user.userid];
+                } else{
+                    sql_query = 'INSERT INTO voted SET poll = ?, user_ip = INET6_ATON("' + ip + '")';
+                    query_options = [option.poll];
+                }
+                connection.query(sql_query, query_options, function(err, result){
                     if(err){
                         connection.rollback(function(){
                             status = 'an error occurred, vote could not be registered';
@@ -61,47 +121,27 @@ module.exports = function(req){
                             return callback_(status, null);
                         });
                     }
-                    connection.query('UPDATE poll SET voted = voted + 1 WHERE pollid = ?', [option.poll], function(err, result){
-                        if(err){
-                            connection.rollback(function(){
+                    connection.commit(function(err){
+                        if (err){
+                            connection.rollback(function() {
                                 status = 'an error occurred, vote could not be registered';
                                 console.log(err);
                                 return callback_(status, null);
                             });
                         }
-                        if(req.user){
-                            sql_query = 'INSERT INTO voted SET poll = ?, user = ?';
-                            query_options = [option.poll, req.user.userid];
-                        } else{
-                            sql_query = 'INSERT INTO voted SET poll = ?, user_ip = INET6_ATON("' + ip + '")';
-                            query_options = [option.poll];
+                        if(custom){
+                            status = 'you voted ' + custom;
+                        } else {
+                            status = 'you voted ' + option.name;
                         }
-                        connection.query(sql_query, query_options, function(err, result){
-                            if(err){
-                                connection.rollback(function(){
-                                    status = 'an error occurred, vote could not be registered';
-                                    console.log(err);
-                                    return callback_(status, null);
-                                });
-                            }
-                            connection.commit(function(err){
-                                if (err){
-                                    connection.rollback(function() {
-                                        status = 'an error occurred, vote could not be registered';
-                                        console.log(err);
-                                        return callback_(status, null);
-                                    });
-                                }
-                                status = 'you voted ' + option.name;
-                                console.log(status);
-                                connection.end();
-                                return callback_(null, status);
-                            });
-                        });
-                    });
 
+                        console.log(status);
+                        connection.end();
+                        return callback_(null, status);
+                    });
                 });
             });
+
         });
     });
 }
