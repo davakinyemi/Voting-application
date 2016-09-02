@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <% include partials/head %>
+    <link rel="stylesheet" href="/stylesheets/poll_chart.css">
     <script src="https://cdn.rawgit.com/konvajs/konva/1.1.0/konva.min.js"></script>
-    <script src="/javascripts/konva_chart.js"></script>
     <script>
         $(document).ready(function(){
             $('#nav_item_home').addClass('active');
@@ -21,5 +21,7 @@
     <% include partials/poll_chart %>
     <% } %>
 </main>
+<% include partials/options %>
+<script src="/javascripts/konva_chart.js"></script>
 </body>
 </html>

@@ -85,10 +85,12 @@ module.exports = function(req){
 function replaceEmptyOpts(options){
     var arr = [];
     for(var i = 0; i < options.length; i++){
-        var opt = options[i].trim();
+        var opt = options[i].toLowerCase().trim();
         if(opt.length > 0){
-            console.log('opt: ' + opt);
-            arr.push(opt);
+            if(arr.indexOf(opt) == -1){
+                console.log('opt: ' + opt);
+                arr.push(opt);
+            }
         }
     }
     return arr;

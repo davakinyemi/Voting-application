@@ -27,27 +27,31 @@
             </form>
         </div>
         <div class="col-sm-8" id="chart_container">
-            <% if (poll_stats.user == user) { %>
-            <button class="btn btn-block btn-danger" data-toggle="modal" data-target="#delete_modal">Remove this Poll</button>
 
-            <div class="modal fade" id="delete_modal" role="dialog">
-                <div class="modal-dialog">
-                    <!-- Modal content-->
-                    <div class="modal-content">
-                        <div class="modal-header text-center">
-                            <h3>Delete poll?</h3>
-                            <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        </div>
-                        <div class="modal-body text-center">
-                            <form method="post" action="/remove_poll?num=<%= poll_stats.pollid %>">
-                                <button type="submit" name="submit" value="remove_poll" class="btn btn-primary">Yes</button>
-                                <div class="btn btn-primary" data-dismiss="modal">No</div>
-                            </form>
-                        </div>
+        </div>
+        <ul class="legend">
+
+        </ul>
+        <% if (poll_stats.user == user) { %>
+        <button class="btn btn-block btn-danger" data-toggle="modal" data-target="#delete_modal">Remove this Poll</button>
+
+        <div class="modal fade" id="delete_modal" role="dialog">
+            <div class="modal-dialog">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header text-center">
+                        <h3>Delete poll?</h3>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body text-center">
+                        <form method="post" action="/remove_poll?num=<%= poll_stats.pollid %>">
+                            <button type="submit" name="submit" value="remove_poll" class="btn btn-primary">Yes</button>
+                            <div class="btn btn-primary" data-dismiss="modal">No</div>
+                        </form>
                     </div>
                 </div>
             </div>
-            <% } %>
         </div>
+        <% } %>
     </div>
 </div>
