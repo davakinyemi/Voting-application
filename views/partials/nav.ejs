@@ -30,3 +30,36 @@
         </ul>
     </div>
 </nav>
+
+<div class="modal fade" id="signup_modal" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h3>Sign up</h3>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="placeholder"> <!--For some reason, first element not rendered in modal-->
+                </form>
+
+                <% if (signup_message_fail.length > 0) { %>
+                <div class="alert alert-danger"><%= signup_message_fail %></div>
+                <% } %>
+
+                <form method="post" action="/sign_up">
+
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="username" name="username" placeholder="username" required/>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="password" class="form-control" id="pwd" name="password" placeholder="password" required/>
+                    </div>
+                    <button type="submit" name="submit" value="sign_up" class="btn btn-primary">Sign Up</button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
