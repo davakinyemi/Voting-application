@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Sep 01, 2016 at 04:35 AM
+-- Generation Time: Sep 02, 2016 at 02:09 AM
 -- Server version: 5.7.13-0ubuntu0.16.04.2
 -- PHP Version: 5.6.25-2+deb.sury.org~xenial+1
 
@@ -111,12 +111,12 @@ ALTER TABLE `voted`
 -- AUTO_INCREMENT for table `options`
 --
 ALTER TABLE `options`
-  MODIFY `optionsid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+  MODIFY `optionsid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
 --
 -- AUTO_INCREMENT for table `poll`
 --
 ALTER TABLE `poll`
-  MODIFY `pollid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
+  MODIFY `pollid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
 --
 -- AUTO_INCREMENT for table `users`
 --
