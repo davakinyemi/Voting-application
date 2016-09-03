@@ -89,8 +89,7 @@ function getAngle(votes, total){
     if(votes == 0){
         return 0;
     }
-    var percentage = (votes/total) * 100;
-    return (percentage/100) * 360;
+    return 360 * (votes/total);
 }
 
 function getLegend(name, color){
