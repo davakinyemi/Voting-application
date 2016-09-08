@@ -14,6 +14,48 @@ $(document).ready(function(){
 
     var layer = new Konva.Layer();
 
+    var tooltipLayer = new Konva.Layer();
+
+    var tooltip = new Konva.Label({
+        opacity: 0.75,
+        visible: false,
+        listening: false
+    });
+
+    tooltip.add(new Konva.Tag({
+        fill: 'black',
+        pointerDirection: 'down',
+        pointerWidth: 10,
+        pointerHeight: 10,
+        lineJoin: 'round',
+        shadowColor: 'black',
+        shadowBlur: 10,
+        shadowOffset: 10,
+        shadowOpacity: 0.2
+    }));
+
+    tooltip.add(new Konva.Tag({
+        fill: 'black',
+        pointerDirection: 'down',
+        pointerWidth: 10,
+        pointerHeight: 10,
+        lineJoin: 'round',
+        shadowColor: 'black',
+        shadowBlur: 10,
+        shadowOffset: 10,
+        shadowOpacity: 0.2
+    }));
+
+    tooltip.add(new Konva.Text({
+        text: '',
+        fontFamily: 'Calibri',
+        fontSize: 18,
+        padding: 5,
+        fill: 'white'
+    }));
+
+    tooltipLayer.add(tooltip);
+
     var chart_colors;
     var total = getTotalVotes();
     var x = stage.getWidth()/2;
@@ -33,6 +75,27 @@ $(document).ready(function(){
             layer.add(new Konva.Arc(arcs[i]));
         }
         stage.add(layer);
+        stage.add(tooltipLayer);
+
+        stage.on('mouseover mousemove', function(evt) {
+            var node = evt.target;
+            if (node) {
+                // update tooltip
+                var mousePos = node.getStage().getPointerPosition();
+                tooltip.position({
+                    x : mousePos.x,
+                    y : mousePos.y - 5
+                });
+                tooltip.getText().setText(node.attrs.title + ": " + node.attrs.voted);
+                tooltip.show();
+                tooltipLayer.batchDraw();
+            }
+        });
+
+        stage.on('mouseout', function(evt) {
+            tooltip.hide();
+            tooltipLayer.draw();
+        });
     }
 
 });
@@ -68,7 +131,9 @@ function getArcs(total, x_pos, y_Pos, inner_R, outer_R, strokeSize, stroke_color
             rotation: arc_rotation,
             fill: CSS_COLOR_NAMES[i],
             stroke: stroke_color,
-            strokeWidth: strokeSize
+            strokeWidth: strokeSize,
+            voted: options[i].votedfor,
+            title: options[i].name
         };
         arcs.push(arc);
         $('.legend').append(getLegend(options[i].name, CSS_COLOR_NAMES[i]));
